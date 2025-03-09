@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Folder = () => {
+const Folders = () => {
   return (
     <h1>Folder</h1>
   )
 }
 
-export default Folder
+export default Folders

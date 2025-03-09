@@ -7,8 +7,18 @@ import {
   FaThLarge,
   FaFileAlt,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  // Function to handle logout
+  const handleLogout = () => {
+    // Perform logout logic (e.g., clear tokens, redirect to login)
+    console.log("User logged out");
+    navigate("/login"); // Redirect to login page
+  };
+
   return (
     <nav
       className={`z-10 fixed w-64 h-screen bg-white shadow-md flex flex-col transition-transform duration-300 ${
@@ -26,25 +36,54 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4">
         <ul className="space-y-2">
-          <SidebarItem icon={<FaThLarge />} text="Dashboard" active />
+          {/* Dashboard */}
+          <SidebarItem
+            icon={<FaThLarge />}
+            text="Dashboard"
+            onClick={() => navigate("/")} // Navigate to homepage
+            active={window.location.pathname === "/"} // Highlight active route
+          />
+
+          {/* New Folder */}
           <SidebarItem
             icon={<FaPlus />}
             text="New Folder"
             onClick={() => openNewItemModal("folder")} // Open modal for folder
           />
+
+          {/* New File */}
           <SidebarItem
             icon={<FaFileAlt />}
             text="New File"
             onClick={() => openNewItemModal("file")} // Open modal for file
           />
-          <SidebarItem icon={<FaFolder />} text="My Folders" />
-          <SidebarItem icon={<FaUser />} text="My Account" />
+
+          {/* My Folders */}
+          <SidebarItem
+            icon={<FaFolder />}
+            text="My Folders"
+            onClick={() => navigate("/folders")} // Navigate to My Folders
+            active={window.location.pathname === "/folders"} // Highlight active route
+          />
+
+          {/* My Account */}
+          <SidebarItem
+            icon={<FaUser />}
+            text="My Account"
+            onClick={() => navigate("/account")} // Navigate to My Account
+            active={window.location.pathname === "/account"} // Highlight active route
+          />
         </ul>
       </div>
 
       {/* Logout Button */}
       <div className="p-4">
-        <SidebarItem icon={<FaSignOutAlt />} text="Logout" isLogout />
+        <SidebarItem
+          icon={<FaSignOutAlt />}
+          text="Logout"
+          isLogout
+          onClick={handleLogout} // Handle logout
+        />
       </div>
     </nav>
   );
