@@ -13,7 +13,6 @@ const FolderSection = ({folderName="My Folders"}) => {
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
         <Folder className="w-full" />
         <FolderProtected className="w-full" />
-        <Folder className="w-full" />
         <FolderProtected className="w-full" />
       </div>
     </section>

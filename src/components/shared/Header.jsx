@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaFolder, FaUserCircle, FaSearch, FaPlus, FaFileAlt, FaBars } from "react-icons/fa";
 
-const Header = ({ toggleSidebar }) => {
+const Header = ({ toggleSidebar, openNewItemModal }) => {
   const [showSearch, setShowSearch] = useState(false);
 
   return (
@@ -9,8 +9,8 @@ const Header = ({ toggleSidebar }) => {
       {/* Left Side - Sidebar Toggle & Title */}
       <div className="flex items-center gap-3 text-lg font-semibold">
         <FaBars className="text-blue-500 cursor-pointer lg:hidden" onClick={toggleSidebar} />
-        <span className="hidden md:inline text-blue-500"><FaFolder /></span> {/* 🔹 Folder Icon Hidden on Small Screens */}
-        <span>All Folders</span> {/* ✅ Title always visible */}
+        <span className="hidden md:inline text-blue-500"><FaFolder /></span>
+        <span>All Folders</span>
       </div>
 
       {/* Search Bar - Hidden on Small Screens */}
@@ -33,13 +33,19 @@ const Header = ({ toggleSidebar }) => {
         </button>
 
         {/* Add Folder Button */}
-        <button className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 md:w-auto md:px-4 md:py-2 md:gap-2">
+        <button 
+          className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 md:w-auto md:px-4 md:py-2 md:gap-2"
+          onClick={() => openNewItemModal("folder")} // Open modal for folder
+        >
           <FaPlus />
           <span className="hidden md:inline">Add Folder</span>
         </button>
 
         {/* Add File Button */}
-        <button className="flex items-center justify-center w-10 h-10 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 md:w-auto md:px-4 md:py-2 md:gap-2">
+        <button 
+          className="flex items-center justify-center w-10 h-10 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 md:w-auto md:px-4 md:py-2 md:gap-2"
+          onClick={() => openNewItemModal("file")} // Open modal for file
+        >
           <FaFileAlt />
           <span className="hidden md:inline">Add File</span>
         </button>

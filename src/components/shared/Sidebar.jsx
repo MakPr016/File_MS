@@ -8,7 +8,7 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
   return (
     <nav
       className={`z-10 fixed w-64 h-screen bg-white shadow-md flex flex-col transition-transform duration-300 ${
@@ -27,14 +27,22 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       <div className="flex-1 overflow-y-auto p-4">
         <ul className="space-y-2">
           <SidebarItem icon={<FaThLarge />} text="Dashboard" active />
-          <SidebarItem icon={<FaPlus />} text="New Folder" />
-          <SidebarItem icon={<FaFileAlt />} text="New File" />
+          <SidebarItem
+            icon={<FaPlus />}
+            text="New Folder"
+            onClick={() => openNewItemModal("folder")} // Open modal for folder
+          />
+          <SidebarItem
+            icon={<FaFileAlt />}
+            text="New File"
+            onClick={() => openNewItemModal("file")} // Open modal for file
+          />
           <SidebarItem icon={<FaFolder />} text="My Folders" />
           <SidebarItem icon={<FaUser />} text="My Account" />
         </ul>
       </div>
 
-      {/* Logout Button (Pinned at Bottom) */}
+      {/* Logout Button */}
       <div className="p-4">
         <SidebarItem icon={<FaSignOutAlt />} text="Logout" isLogout />
       </div>
@@ -42,10 +50,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   );
 };
 
-// Sidebar Item Component
-const SidebarItem = ({ icon, text, active, isLogout }) => {
+const SidebarItem = ({ icon, text, active, isLogout, onClick }) => {
   return (
     <li
+      onClick={onClick}
       className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
         active
           ? "bg-blue-100 text-blue-600"
