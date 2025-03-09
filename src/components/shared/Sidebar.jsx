@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   FaFolder,
   FaUser,
@@ -7,20 +7,45 @@ import {
   FaThLarge,
   FaFileAlt,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const sidebarRef = useRef(); // Ref for detecting outside clicks
 
-  // Function to handle logout
+  // Handle clicks outside the sidebar
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)
+      ) {
+        toggleSidebar();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, toggleSidebar]);
+
+  // Close sidebar on item click (mobile only)
+  const handleItemClick = (action) => {
+    action();
+    if (isOpen) toggleSidebar();
+  };
+
+  // Logout handler
   const handleLogout = () => {
-    // Perform logout logic (e.g., clear tokens, redirect to login)
-    console.log("User logged out");
-    navigate("/login"); // Redirect to login page
+    navigate("/login");
+    if (isOpen) toggleSidebar();
   };
 
   return (
     <nav
+      ref={sidebarRef}
       className={`z-10 fixed w-64 h-screen bg-white shadow-md flex flex-col transition-transform duration-300 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } lg:translate-x-0`}
@@ -36,42 +61,33 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4">
         <ul className="space-y-2">
-          {/* Dashboard */}
           <SidebarItem
             icon={<FaThLarge />}
             text="Dashboard"
-            onClick={() => navigate("/")} // Navigate to homepage
-            active={window.location.pathname === "/"} // Highlight active route
+            onClick={() => handleItemClick(() => navigate("/"))}
+            active={window.location.pathname === "/"}
           />
-
-          {/* New Folder */}
           <SidebarItem
             icon={<FaPlus />}
             text="New Folder"
-            onClick={() => openNewItemModal("folder")} // Open modal for folder
+            onClick={() => handleItemClick(() => openNewItemModal("folder"))}
           />
-
-          {/* New File */}
           <SidebarItem
             icon={<FaFileAlt />}
             text="New File"
-            onClick={() => openNewItemModal("file")} // Open modal for file
+            onClick={() => handleItemClick(() => openNewItemModal("file"))}
           />
-
-          {/* My Folders */}
           <SidebarItem
             icon={<FaFolder />}
             text="My Folders"
-            onClick={() => navigate("/folders")} // Navigate to My Folders
-            active={window.location.pathname === "/folders"} // Highlight active route
+            onClick={() => handleItemClick(() => navigate("/folders"))}
+            active={window.location.pathname === "/folders"}
           />
-
-          {/* My Account */}
           <SidebarItem
             icon={<FaUser />}
             text="My Account"
-            onClick={() => navigate("/account")} // Navigate to My Account
-            active={window.location.pathname === "/account"} // Highlight active route
+            onClick={() => handleItemClick(() => navigate("/account"))}
+            active={window.location.pathname === "/account"}
           />
         </ul>
       </div>
@@ -82,27 +98,25 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
           icon={<FaSignOutAlt />}
           text="Logout"
           isLogout
-          onClick={handleLogout} // Handle logout
+          onClick={handleLogout}
         />
       </div>
     </nav>
   );
 };
 
-const SidebarItem = ({ icon, text, active, isLogout, onClick }) => {
-  return (
-    <li
-      onClick={onClick}
-      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
-        active
-          ? "bg-blue-100 text-blue-600"
-          : "hover:bg-blue-50 text-gray-700"
-      } ${isLogout ? "hover:bg-red-100 text-red-600" : ""}`}
-    >
-      {icon}
-      <span className="text-lg">{text}</span>
-    </li>
-  );
-};
+const SidebarItem = ({ icon, text, active, isLogout, onClick }) => (
+  <li
+    onClick={onClick}
+    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
+      active
+        ? "bg-blue-100 text-blue-600"
+        : "hover:bg-blue-50 text-gray-700"
+    } ${isLogout ? "hover:bg-red-100 text-red-600" : ""}`}
+  >
+    {icon}
+    <span className="text-lg">{text}</span>
+  </li>
+);
 
 export default Sidebar;
