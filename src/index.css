@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: Poppins;
+    src: url("./assets/pop.ttf");
+}
+
+*{
+    box-sizing: border-box;
+}
+body{
+    font-family: Poppins;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
