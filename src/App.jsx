@@ -1,12 +1,17 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Header, Sidebar } from "./components";
 import AppRoutes from "./routes/Routes";
 import NewItemModal from "./components/modals/NewItemModal";
 
 const App = () => {
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [itemType, setItemType] = useState(null); // Track type of item (file/folder)
+  const [itemType, setItemType] = useState(null);
+
+  // Determine if the current path is for login or signup
+  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
 
   const handleOpenModal = (type) => {
     setItemType(type);
@@ -15,32 +20,38 @@ const App = () => {
 
   const handleSave = (data) => {
     console.log("New Item Data:", data);
-    // Here you can handle saving folder or file to backend/state
-    setIsModalOpen(false); // Close the modal after saving
+    setIsModalOpen(false);
   };
 
   return (
     <div className="flex h-screen w-full">
-      <Sidebar
-        isOpen={isSidebarOpen}
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        openNewItemModal={handleOpenModal} // Pass the function to Sidebar
-      />
-
-      <main className="flex-grow flex flex-col p-6 max-md:p-2 gap-6 lg:ml-64 overflow-y-auto">
-        <Header
+      {!isAuthPage && (
+        <Sidebar
+          isOpen={isSidebarOpen}
           toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-          openNewItemModal={handleOpenModal} // Pass the function to Header
+          openNewItemModal={handleOpenModal}
         />
+      )}
+
+      <main
+        className={`flex-grow flex flex-col py-6 px-2 max-md:p-2 gap-6 ${
+          !isAuthPage ? "lg:ml-64" : ""
+        } overflow-y-auto`}
+      >
+        {!isAuthPage && (
+          <Header
+            toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            openNewItemModal={handleOpenModal}
+          />
+        )}
         <AppRoutes />
       </main>
 
-      {/* New Item Modal */}
       <NewItemModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
-        itemType={itemType} // Pass the selected type
+        itemType={itemType}
       />
     </div>
   );

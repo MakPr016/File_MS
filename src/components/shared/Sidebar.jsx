@@ -4,16 +4,15 @@ import {
   FaUser,
   FaSignOutAlt,
   FaPlus,
-  FaThLarge,
+  FaHome,
   FaFileAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
   const navigate = useNavigate();
-  const sidebarRef = useRef(); // Ref for detecting outside clicks
+  const sidebarRef = useRef();
 
-  // Handle clicks outside the sidebar
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -31,7 +30,7 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
     };
   }, [isOpen, toggleSidebar]);
 
-  // Close sidebar on item click (mobile only)
+  // mobile only 
   const handleItemClick = (action) => {
     action();
     if (isOpen) toggleSidebar();
@@ -62,8 +61,8 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
       <div className="flex-1 overflow-y-auto p-4">
         <ul className="space-y-2">
           <SidebarItem
-            icon={<FaThLarge />}
-            text="Dashboard"
+            icon={<FaHome />}
+            text="Home"
             onClick={() => handleItemClick(() => navigate("/"))}
             active={window.location.pathname === "/"}
           />

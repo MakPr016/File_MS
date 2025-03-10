@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { FaFolder, FaUserCircle, FaSearch, FaPlus, FaFileAlt, FaBars } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Header = ({ toggleSidebar, openNewItemModal }) => {
   const [showSearch, setShowSearch] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   return (
     <header className="flex items-center justify-between w-full px-4 py-2">
       {/* Left Side - Sidebar Toggle & Title */}
       <div className="flex items-center gap-3 text-lg font-semibold">
-        <FaBars className="text-blue-500 cursor-pointer lg:hidden" onClick={toggleSidebar} />
+        <FaBars className="text-blue-500 cursor-pointer lg:hidden" size={24} onClick={toggleSidebar} />
         <span className="hidden md:inline text-blue-500"><FaFolder /></span>
         <span>All Folders</span>
       </div>
@@ -51,7 +53,10 @@ const Header = ({ toggleSidebar, openNewItemModal }) => {
         </button>
 
         {/* User Icon */}
-        <div className="flex items-center gap-2">
+        <div 
+          className="flex items-center gap-2 cursor-pointer" 
+          onClick={() => navigate("/account")} // Navigate to /account
+        >
           <FaUserCircle className="text-blue-500 text-3xl" />
         </div>
       </div>

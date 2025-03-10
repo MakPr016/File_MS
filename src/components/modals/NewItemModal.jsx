@@ -42,7 +42,7 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
       <div className="space-y-4">
         {/* Name Input */}
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-semibold mb-2 text-gray-700">
             {itemType === "file" ? "File Name *" : "Folder Name *"}
           </label>
           <input
@@ -50,15 +50,15 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
             placeholder={`Enter ${itemType === "file" ? "file name" : "folder name"}`}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
           />
         </div>
 
         {/* File Upload Section */}
         {itemType === "file" && (
           <div>
-            <label className="block text-sm font-medium mb-1">Upload File *</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">Upload File *</label>
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center bg-white hover:border-blue-400 transition-colors">
               <input
                 type="file"
                 onChange={(e) => setFile(e.target.files[0])}
@@ -83,7 +83,7 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
                   />
                 </svg>
                 <span className="text-gray-600">
-                  Drag & Drop your files or <span className="text-blue-600">Browse</span>
+                  Drag & Drop your files or <span className="text-blue-500">Browse</span>
                 </span>
               </label>
             </div>
@@ -96,23 +96,23 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
         {/* Description */}
         {itemType === "file" && (
           <div>
-            <label className="block text-sm font-medium mb-1">File Description</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">File Description</label>
             <textarea
               placeholder="Write file description..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-24"
+              className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white h-24 resize-none"
             />
           </div>
         )}
 
         {/* Location Selector */}
         <div>
-          <label className="block text-sm font-medium mb-1">Location</label>
+          <label className="block text-sm font-semibold mb-2 text-gray-700">Location</label>
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
           >
             <option>Root</option>
             <option>Current Directory</option>
@@ -127,9 +127,9 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
                 type="checkbox"
                 checked={isProtected}
                 onChange={() => setIsProtected(!isProtected)}
-                className="rounded text-blue-600 focus:ring-blue-500"
+                className="rounded text-blue-500 focus:ring-blue-400 h-4 w-4"
               />
-              <span className="text-sm">Add Password Protection</span>
+              <span className="text-sm text-gray-700">Add Password Protection</span>
             </label>
             {isProtected && (
               <input
@@ -137,23 +137,28 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
                 placeholder="Enter Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
               />
+            )}
+            {isProtected && (
+              <span className="inline-block ml-2 px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-md">
+                Protected
+              </span>
             )}
           </div>
         )}
 
         {/* Buttons */}
-        <div className="flex justify-end gap-3 mt-6">
+        <div className="flex justify-end gap-3 mt-6 border-t border-gray-200 pt-6">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+            className="px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium"
           >
             Close
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-4 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium shadow-sm"
           >
             {itemType === "file" ? "Upload" : "Create Folder"}
           </button>

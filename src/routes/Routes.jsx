@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { Home, Folders, Login, Account } from "../pages"
+import { Home, Folders, Login, Signup, Account } from "../pages"
 
 const AppRoutes = () => {
   return (
@@ -8,6 +8,7 @@ const AppRoutes = () => {
         <Route path="/folders" element={<Folders />} /> {/* My Folders */}
         <Route path="/account" element={<Account />} /> {/* My Account */}
         <Route path="/login" element={<Login />} /> {/* Login page */}
+        <Route path="/signup" element={<Signup />} /> {/* Login page */}
     </Routes>
   );
 };
