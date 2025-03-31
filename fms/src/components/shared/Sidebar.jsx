@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
 
   // Logout handler
   const handleLogout = () => {
-    navigate("/login");
+    navigate("/signup");
     if (isOpen) toggleSidebar();
   };
 
