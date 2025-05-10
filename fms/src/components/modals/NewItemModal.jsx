@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
+import toast from 'react-hot-toast';
 
 const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
   const [name, setName] = useState("");
@@ -8,8 +9,29 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
   const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");
   const [isProtected, setIsProtected] = useState(false);
+  const [folders, setFolders] = useState([]);
+  const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
   useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/folders", {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          setFolders(data);
+        } else {
+          console.error("Failed to fetch folders:", data.message);
+        }
+      } catch (err) {
+        console.error("Error fetching folders:", err);
+      }
+    };
+
     if (!isOpen) {
       setName("");
       setFile(null);
@@ -17,20 +39,69 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
       setDescription("");
       setPassword("");
       setIsProtected(false);
+      fetchFolders();
     }
   }, [isOpen]);
 
-  const handleSave = () => {
-    const data = { name, location };
-    if (itemType === "file") {
-      data.file = file;
-      data.description = description;
-    } else if (itemType === "folder") {
-      data.isProtected = isProtected;
-      if (isProtected) data.password = password;
+  const handleSave = async () => {
+    try {
+      if (itemType === "file") {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("name", name);
+        formData.append("description", description);
+        formData.append("parentFolder", isValidObjectId(location) ? location : "");
+
+        const response = await fetch("http://localhost:3000/api/files/upload", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+          },
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log("File uploaded:", data);
+          toast.success("File uploaded successfully!");
+        } else {
+          console.error("File upload failed:", data);
+          toast.error("File upload failed!");
+        }
+
+      } else if (itemType === "folder") {
+        const body = {
+          name,
+          parentFolder: isValidObjectId(location) ? location : null,
+          isPasswordProtected: isProtected,
+          password: isProtected ? password : null,
+        };
+
+        const response = await fetch("http://localhost:3000/api/folders/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+          },
+          body: JSON.stringify(body),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log("Folder created:", data);
+          toast.success("Folder created successfully!");
+        } else {
+          console.error("Folder creation failed:", data);
+          toast.error("Folder creation failed!");
+        }
+      }
+
+      onClose(); 
+    } catch (error) {
+      console.error("An error occurred:", error);
     }
-    onSave(data);
-    onClose();
   };
 
   return (
@@ -55,43 +126,55 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
         </div>
 
         {/* File Upload Section */}
-        {itemType === "file" && (
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700">Upload File *</label>
-            <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center bg-white hover:border-blue-400 transition-colors">
-              <input
-                type="file"
-                onChange={(e) => setFile(e.target.files[0])}
-                className="hidden"
-                id="file-upload"
-              />
-              <label 
-                htmlFor="file-upload"
-                className="cursor-pointer flex flex-col items-center"
-              >
-                <svg 
-                  className="w-8 h-8 text-gray-400 mb-2" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2" 
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                <span className="text-gray-600">
-                  Drag & Drop your files or <span className="text-blue-500">Browse</span>
-                </span>
-              </label>
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Note: Max. 25 MB file size is allowed.
-            </p>
-          </div>
-        )}
+{itemType === "file" && (
+  <div>
+    <label className="block text-sm font-semibold mb-2 text-gray-700">
+      Upload File *
+    </label>
+    <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center bg-white hover:border-blue-400 transition-colors">
+      <input
+        type="file"
+        onChange={(e) => setFile(e.target.files[0])}
+        className="hidden"
+        id="file-upload"
+      />
+      <label 
+        htmlFor="file-upload"
+        className="cursor-pointer flex flex-col items-center"
+      >
+        <svg 
+          className="w-8 h-8 text-gray-400 mb-2" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth="2" 
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
+        </svg>
+        <span className="text-gray-600 text-sm text-center">
+          {file ? (
+            <>
+              <span className="font-medium text-green-600 block">{file.name}</span>
+              <span className="text-blue-500 underline">Choose another file</span>
+            </>
+          ) : (
+            <>
+              Drag & Drop your files or <span className="text-blue-500">Browse</span>
+            </>
+          )}
+        </span>
+      </label>
+    </div>
+    <p className="text-sm text-gray-500 mt-2">
+      Note: Max. 25 MB file size is allowed.
+    </p>
+  </div>
+)}
+
 
         {/* Description */}
         {itemType === "file" && (
@@ -114,8 +197,12 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
             onChange={(e) => setLocation(e.target.value)}
             className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
           >
-            <option>Root</option>
-            <option>Current Directory</option>
+            <option value="Root">Root</option>
+              {folders.map((folder) => (
+                <option key={folder._id} value={folder._id}>
+                  {folder.name}
+                </option>
+              ))}
           </select>
         </div>
 

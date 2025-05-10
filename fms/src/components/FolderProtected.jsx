@@ -1,7 +1,7 @@
 import { MoreVertical } from "lucide-react";
-import { FaFolder, FaLock } from "react-icons/fa";
+import { FaFolder } from "react-icons/fa";
 
-const FolderProtected = () => {
+const FolderProtected = ({ name, fileCount, size }) => {
   return (
     <div className="bg-blue-50 p-6 rounded-2xl shadow-md flex flex-col gap-3 w-full">
       {/* Header: Folder Icon & More Options */}
@@ -13,20 +13,17 @@ const FolderProtected = () => {
       </div>
 
       {/* Folder Name */}
-      <h2 className="text-lg font-semibold">Folder Name</h2>
-
-      {/* Protected Label */}
-      <div className="flex items-center text-green-500 gap-1">
-        <FaLock className="text-sm" />
-        <span className="text-sm text-gray-600">Protected</span>
-      </div>
+      <h2 className="text-lg font-semibold text-gray-900">{name}</h2>
 
       {/* File Info */}
       <div className="text-sm text-gray-500 flex gap-2">
-        <span>10 Files</span>
+        <span>{fileCount} Files</span>
         <span>|</span>
-        <span>2.50 MB</span>
+        <span>{size}</span>
       </div>
+
+      {/* Protected Folder Info */}
+      <div className="text-sm text-red-500 mt-2">Protected</div>
     </div>
   );
 };

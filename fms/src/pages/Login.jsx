@@ -1,13 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/"); // Redirect after login
+
+    try {
+      const response = await fetch("http://localhost:3000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Login failed");
+        return;
+      }
+
+      // Save token (optional: in localStorage/sessionStorage)
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      navigate("/"); // Redirect to homepage
+    } catch (err) {
+      console.error(err);
+      setError("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -45,6 +74,8 @@ const Login = () => {
                   type="email"
                   placeholder="Enter your email"
                   className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
                 <FaUser className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -61,6 +92,8 @@ const Login = () => {
                   type="password"
                   placeholder="Enter your password"
                   className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <FaLock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -80,6 +113,11 @@ const Login = () => {
                 Forgot Password?
               </a>
             </div>
+            
+            {/* Error Message */}
+            {error && (
+              <div className="text-red-500 text-sm text-center">{error}</div>
+            )}
 
             {/* Login Button */}
             <button
@@ -92,7 +130,7 @@ const Login = () => {
             {/* Sign Up Link */}
             <div className="text-center text-sm text-gray-600">
               Don't have an account?{" "}
-              <a href="#" className="text-blue-500 hover:text-blue-600 hover:underline">
+              <a href="/signup" className="text-blue-500 hover:text-blue-600 hover:underline">
                 Create account
               </a>
             </div>

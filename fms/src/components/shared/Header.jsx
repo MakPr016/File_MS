@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { FaFolder, FaUserCircle, FaSearch, FaPlus, FaFileAlt, FaBars } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { FaFolder, FaSearch, FaPlus, FaFileAlt, FaBars } from "react-icons/fa";
 
 const Header = ({ toggleSidebar, openNewItemModal }) => {
   const [showSearch, setShowSearch] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
 
   return (
     <header className="flex items-center justify-between w-full px-4 py-2">
@@ -51,14 +49,6 @@ const Header = ({ toggleSidebar, openNewItemModal }) => {
           <FaFileAlt />
           <span className="hidden md:inline">Add File</span>
         </button>
-
-        {/* User Icon */}
-        <div 
-          className="flex items-center gap-2 cursor-pointer" 
-          onClick={() => navigate("/account")} // Navigate to /account
-        >
-          <FaUserCircle className="text-blue-500 text-3xl" />
-        </div>
       </div>
     </header>
   );

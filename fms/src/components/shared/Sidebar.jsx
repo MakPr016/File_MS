@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   FaFolder,
   FaUser,
@@ -10,10 +10,17 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const sidebarRef = useRef();
 
   useEffect(() => {
+    // Check if the token exists in localStorage/sessionStorage to determine authentication
+    const token = localStorage.getItem("authToken"); // You can also use sessionStorage
+    if (token) {
+      setIsAuthenticated(true);
+    }
+
     const handleClickOutside = (event) => {
       if (
         isOpen &&
@@ -30,7 +37,7 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
     };
   }, [isOpen, toggleSidebar]);
 
-  // mobile only 
+  // mobile only
   const handleItemClick = (action) => {
     action();
     if (isOpen) toggleSidebar();
@@ -38,7 +45,15 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
 
   // Logout handler
   const handleLogout = () => {
-    navigate("/signup");
+    // Remove the token from storage on logout
+    localStorage.removeItem("authToken"); // Or sessionStorage.removeItem("authToken");
+    setIsAuthenticated(false); // Update the authentication state
+    navigate("/login"); // Redirect to login page
+    if (isOpen) toggleSidebar();
+  };
+
+  const handleLogin = () => {
+    navigate("/login"); // Navigate to login page if not authenticated
     if (isOpen) toggleSidebar();
   };
 
@@ -91,14 +106,22 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
         </ul>
       </div>
 
-      {/* Logout Button */}
+      {/* Conditional Logout/Login Button */}
       <div className="p-4">
-        <SidebarItem
-          icon={<FaSignOutAlt />}
-          text="Logout"
-          isLogout
-          onClick={handleLogout}
-        />
+        {isAuthenticated ? (
+          <SidebarItem
+            icon={<FaSignOutAlt />}
+            text="Logout"
+            isLogout
+            onClick={handleLogout}
+          />
+        ) : (
+          <SidebarItem
+            icon={<FaUser />}
+            text="Login"
+            onClick={handleLogin} // Trigger login when not authenticated
+          />
+        )}
       </div>
     </nav>
   );

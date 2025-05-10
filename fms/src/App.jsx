@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Header, Sidebar } from "./components";
 import AppRoutes from "./routes/Routes";
 import NewItemModal from "./components/modals/NewItemModal";
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   const location = useLocation();
@@ -10,7 +11,6 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemType, setItemType] = useState(null);
 
-  // Determine if the current path is for login or signup
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
 
   const handleOpenModal = (type) => {
@@ -24,6 +24,8 @@ const App = () => {
   };
 
   return (
+  <>
+    <Toaster position="top-right" reverseOrder={false} />
     <div className="flex h-screen w-full">
       {!isAuthPage && (
         <Sidebar
@@ -37,11 +39,11 @@ const App = () => {
         className={`flex-grow flex flex-col py-6 px-2 max-md:p-2 gap-6 ${
           !isAuthPage ? "lg:ml-64" : ""
         } overflow-y-auto`}
-      >
+        >
         {!isAuthPage && (
           <Header
-            toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-            openNewItemModal={handleOpenModal}
+          toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          openNewItemModal={handleOpenModal}
           />
         )}
         <AppRoutes />
@@ -52,8 +54,9 @@ const App = () => {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         itemType={itemType}
-      />
+        />
     </div>
+  </>
   );
 };
 
