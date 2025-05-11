@@ -28,11 +28,10 @@ const Login = () => {
         return;
       }
 
-      // Save token (optional: in localStorage/sessionStorage)
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      navigate("/home"); // Redirect to homepage
+      navigate("/home");
     } catch (err) {
       console.error(err);
       setError("An error occurred. Please try again.");

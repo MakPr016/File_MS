@@ -9,7 +9,7 @@ router.post("/create", protect, createFolder);
 router.post("/share", protect, shareFolder);
 router.get("/shared", protect, getSharedFolders);
 router.get("/:id", protect, getFolderContents);
-router.delete("/:id", protect, deleteFolder);
+router.delete("/delete/:id", protect, deleteFolder);
 
 
 module.exports = router;

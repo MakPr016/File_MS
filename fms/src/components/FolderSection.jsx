@@ -1,14 +1,36 @@
+import { useState } from "react";
 import Folder from "./Folder";
 import File from "./File";
 import FolderProtected from "./FolderProtected";
 
 const FolderSection = ({ folderName = "My Folders", folders = [], files = [] }) => {
+  const [folderList, setFolderList] = useState(folders);
+  const [fileList, setFileList] = useState(files);
+
   const formatSizeInMB = (bytes) => {
-    const sizeInMB = bytes / (1024 * 1024); 
+    const sizeInMB = bytes / (1024 * 1024);
     return `${sizeInMB.toFixed(2)} MB`;
   };
 
-  const isEmpty = folders.length === 0 && files.length === 0;
+  const handleAction = (action, result) => {
+    const { id, name } = result;
+
+    if (action === "delete") {
+      setFolderList((prev) => prev.filter((f) => f._id !== id));
+      setFileList((prev) => prev.filter((f) => f._id !== id));
+    }
+
+    if (action === "rename") {
+      setFolderList((prev) =>
+        prev.map((f) => (f._id === id ? { ...f, name } : f))
+      );
+      setFileList((prev) =>
+        prev.map((f) => (f._id === id ? { ...f, name } : f))
+      );
+    }
+  };
+
+  const isEmpty = folderList.length === 0 && fileList.length === 0;
 
   return (
     <section className="bg-blue-100 p-6 rounded-lg w-full">
@@ -20,40 +42,32 @@ const FolderSection = ({ folderName = "My Folders", folders = [], files = [] }) 
           <p>No files or folders in this section</p>
         ) : (
           <>
-            {folders.map((folder) => {
+            {folderList.map((folder) => {
               const formattedSize = formatSizeInMB(folder.size);
-              return (
-                folder.isPasswordProtected ? (
-                    <FolderProtected
-                      name={folder.name}
-                      fileCount={folder.fileCount}
-                      folderId={folder._id}
-                      size={formattedSize}
-                      className="w-full"
-                      key={folder._id}
-                      />
-                    ) : (
-                      <Folder
-                      name={folder.name}
-                      folderId={folder._id}
-                      key={folder._id}
-                      fileCount={folder.fileCount}
-                      size={formattedSize}
-                      className="w-full"
-                    />
-                  )
+              const commonProps = {
+                name: folder.name,
+                folderId: folder._id,
+                fileCount: folder.fileCount,
+                size: formattedSize,
+                onAction: handleAction,
+              };
+
+              return folder.isPasswordProtected ? (
+                <FolderProtected key={folder._id} {...commonProps} />
+              ) : (
+                <Folder key={folder._id} {...commonProps} />
               );
             })}
 
-            {files.map((file) => (
-                <File
-                  name={file.name}
-                  size={file.size}
-                  fileId={file._id}
-                  key={file._id}
-                  isPasswordProtected={file.isPasswordProtected}
-                  className="w-full"
-                />
+            {fileList.map((file) => (
+              <File
+                key={file._id}
+                name={file.name}
+                size={file.size}
+                fileId={file._id}
+                isPasswordProtected={file.isPasswordProtected}
+                onAction={handleAction}
+              />
             ))}
           </>
         )}

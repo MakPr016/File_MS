@@ -38,7 +38,39 @@ const FolderPage = () => {
   const formatSizeInMB = (bytes) => {
     if (typeof bytes !== "number" || isNaN(bytes)) return "0.00 MB";
     const sizeInMB = bytes / (1024 * 1024);
-    return `${sizeInMB.toFixed(2)} MB`;
+    return `${sizeInMB.toFixed(2)}`;
+  };
+
+  const handleAction = (action, result) => {
+    console.log("Action:", action);
+
+    if (action === "delete") {
+      setFolderData((prevData) => {
+      if (result.type === "folder") {
+        const updatedFolders = prevData.folders.filter(f => 
+          String(f._id) !== String(result.id)
+        );
+        return { ...prevData, folders: updatedFolders };
+      }
+      const updatedFiles = prevData.files.filter(f => 
+        String(f._id) !== String(result.id)
+      );
+      return { ...prevData, files: updatedFiles };
+    });
+  }
+    if (action === "rename") {
+      setFolderData((prevData) => {
+        const updatedFolders = prevData.folders.map((folder) =>
+          folder._id === result.id ? { ...folder, name: result.name } : folder
+        );
+        const updatedFiles = prevData.files.map((file) =>
+          file._id === result.id ? { ...file, name: result.name } : file
+        );
+        console.log("Updated Folders:", updatedFolders);
+        console.log("Updated Files:", updatedFiles);
+        return { ...prevData, folders: updatedFolders, files: updatedFiles };
+      });
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -62,6 +94,7 @@ const FolderPage = () => {
                   fileCount={folder.fileCount}
                   size={formatSizeInMB(folder.size)}
                   folderId={folder._id}
+                  onAction={handleAction}
                 />
               ) : (
                 <Folder
@@ -70,6 +103,7 @@ const FolderPage = () => {
                   fileCount={folder.fileCount}
                   size={formatSizeInMB(folder.size)}
                   folderId={folder._id}
+                  onAction={handleAction}
                 />
               )
             )
@@ -90,6 +124,7 @@ const FolderPage = () => {
                 name={file.name}
                 type={file.type}
                 size={file.size}
+                onAction={handleAction}
               />
             ))
           )}

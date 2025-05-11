@@ -16,7 +16,6 @@ const Home = () => {
       try {
         const token = localStorage.getItem("authToken");
 
-        // Fetch owned folders
         const ownedRes = await fetch("http://localhost:3000/api/folders", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -26,7 +25,6 @@ const Home = () => {
         if (!ownedRes.ok) throw new Error("Failed to fetch your folders");
         const ownedData = await ownedRes.json();
 
-        // Fetch shared folders
         const sharedRes = await fetch("http://localhost:3000/api/folders/shared", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,7 +50,7 @@ const Home = () => {
   if (loading) return <p>Loading folders...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
-  const recentFolders = ownedFolders.filter((folder) => folder.isRecent); // Placeholder logic
+  const recentFolders = ownedFolders.filter((folder) => folder.isRecent);
 
   return (
     <div className="space-y-6">

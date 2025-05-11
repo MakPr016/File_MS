@@ -1,15 +1,15 @@
-import { MoreVertical } from "lucide-react";
 import { FaFolder } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import OptionsDropdown from "./OptionsDropdown";
 
-const FolderProtected = ({ name, folderId, fileCount, size }) => {
+const FolderProtected = ({ name, folderId, fileCount, size, onAction }) => {
   return (
     <div className="bg-blue-50 p-6 rounded-2xl shadow-md flex flex-col gap-3 w-full">
       <div className="flex justify-between items-center">
         <div className="bg-blue-500 text-white p-2 rounded-lg">
           <FaFolder className="text-2xl" />
         </div>
-        <MoreVertical className="text-gray-500 cursor-pointer" />
+        <OptionsDropdown id={folderId} type="folder" onAction={onAction} />
       </div>
       <Link to={`/folder/${folderId}`} key={folderId}>
       <h2 className="text-lg font-semibold text-gray-900">{name}</h2>

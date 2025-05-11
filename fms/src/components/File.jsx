@@ -1,6 +1,7 @@
-import { MoreVertical, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { FaFileAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import OptionsDropdown from "./OptionsDropdown";
 
 const formatFileSize = (bytes) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -13,7 +14,7 @@ const getFileType = (fileName) => {
   return parts.length > 1 ? parts.pop() : "unknown";
 };
 
-const File = ({ name, size, fileId, isPasswordProtected }) => {
+const File = ({ name, size, fileId, isPasswordProtected, onAction }) => {
   const fileType = getFileType(name);
   const formattedSize = formatFileSize(size);
 
@@ -23,7 +24,7 @@ const File = ({ name, size, fileId, isPasswordProtected }) => {
         <div className="bg-blue-500 text-white p-2 rounded-lg">
           <FaFileAlt className="text-2xl" />
         </div>
-        <MoreVertical className="text-gray-500 cursor-pointer" />
+        <OptionsDropdown id={fileId} type="file" onAction={onAction}/>
       </div>
 
       <Link to={`/file/${fileId}`} key={fileId}>
