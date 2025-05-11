@@ -63,7 +63,7 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log("File uploaded:", data);
+          console.log("File uploaded:");
           toast.success("File uploaded successfully!");
         } else {
           console.error("File upload failed:", data);
@@ -90,7 +90,7 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log("Folder created:", data);
+          console.log("Folder created:");
           toast.success("Folder created successfully!");
         } else {
           console.error("Folder creation failed:", data);

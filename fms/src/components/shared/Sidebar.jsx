@@ -15,8 +15,7 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
   const sidebarRef = useRef();
 
   useEffect(() => {
-    // Check if the token exists in localStorage/sessionStorage to determine authentication
-    const token = localStorage.getItem("authToken"); // You can also use sessionStorage
+    const token = localStorage.getItem("authToken"); 
     if (token) {
       setIsAuthenticated(true);
     }
@@ -37,23 +36,20 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
     };
   }, [isOpen, toggleSidebar]);
 
-  // mobile only
   const handleItemClick = (action) => {
     action();
     if (isOpen) toggleSidebar();
   };
 
-  // Logout handler
   const handleLogout = () => {
-    // Remove the token from storage on logout
-    localStorage.removeItem("authToken"); // Or sessionStorage.removeItem("authToken");
-    setIsAuthenticated(false); // Update the authentication state
-    navigate("/login"); // Redirect to login page
+    localStorage.removeItem("authToken"); 
+    setIsAuthenticated(false);
+    navigate("/login"); 
     if (isOpen) toggleSidebar();
   };
 
   const handleLogin = () => {
-    navigate("/login"); // Navigate to login page if not authenticated
+    navigate("/login"); 
     if (isOpen) toggleSidebar();
   };
 
@@ -64,7 +60,6 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
         isOpen ? "translate-x-0" : "-translate-x-full"
       } lg:translate-x-0`}
     >
-      {/* Sidebar Header */}
       <div className="flex justify-between items-center p-4">
         <h1 className="text-2xl font-bold text-gray-800">Files</h1>
         <button className="lg:hidden text-gray-700" onClick={toggleSidebar}>
@@ -72,14 +67,13 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
         </button>
       </div>
 
-      {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4">
         <ul className="space-y-2">
           <SidebarItem
             icon={<FaHome />}
             text="Home"
-            onClick={() => handleItemClick(() => navigate("/"))}
-            active={window.location.pathname === "/"}
+            onClick={() => handleItemClick(() => navigate("/home"))}
+            active={window.location.pathname === "/home"}
           />
           <SidebarItem
             icon={<FaPlus />}
@@ -106,7 +100,6 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
         </ul>
       </div>
 
-      {/* Conditional Logout/Login Button */}
       <div className="p-4">
         {isAuthenticated ? (
           <SidebarItem
@@ -119,7 +112,7 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
           <SidebarItem
             icon={<FaUser />}
             text="Login"
-            onClick={handleLogin} // Trigger login when not authenticated
+            onClick={handleLogin} 
           />
         )}
       </div>

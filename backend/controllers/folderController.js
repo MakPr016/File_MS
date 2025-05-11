@@ -104,3 +104,50 @@ export const getSharedFolders = async (req, res) => {
     res.status(500).json({ message: "Failed to retrieve shared folders" });
   }
 };
+
+export const getFolderContents = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  try {
+    const rawFolders = await Folder.find({ parentFolder: id, owner: userId });
+    const files = await File.find({ parentFolder: id, owner: userId });
+
+    const folders = await Promise.all(
+      rawFolders.map(async (folder) => {
+        const folderFiles = await File.find({ parentFolder: folder._id });
+        const fileCount = folderFiles.length;
+        const size = folderFiles.reduce((acc, file) => acc + file.size, 0);
+
+        return {
+          ...folder.toObject(),
+          fileCount,
+          size,
+        };
+      })
+    );
+
+    res.status(200).json({ folders, files });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+export const deleteFolder = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+  try {
+    const folder = await Folder.findById(id);
+    if (!folder) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+    if (!folder.owner.equals(userId)) {
+      return res.status(403).json({ message: "Not authorized to delete this folder" });
+    }
+    await File.deleteMany({ parentFolder: id });
+    await Folder.findByIdAndDelete(id);
+    res.status(200).json({ message: "Folder deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};

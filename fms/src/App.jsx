@@ -11,7 +11,7 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemType, setItemType] = useState(null);
 
-  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
+  const isAuthPage = ["/login", "/signup", "/"].includes(location.pathname);
 
   const handleOpenModal = (type) => {
     setItemType(type);
@@ -19,7 +19,6 @@ const App = () => {
   };
 
   const handleSave = (data) => {
-    console.log("New Item Data:", data);
     setIsModalOpen(false);
   };
 

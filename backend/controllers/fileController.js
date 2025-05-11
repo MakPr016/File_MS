@@ -13,12 +13,10 @@ export const uploadFile = async (req, res) => {
 
   try {
     let hashedPassword = null;
-
     if (isPasswordProtected && password) {
       const salt = await bcrypt.genSalt(10);
       hashedPassword = await bcrypt.hash(password, salt);
     }
-
     const newFile = new File({
       name: file.filename,
       fileId: file._id,
@@ -38,7 +36,6 @@ export const uploadFile = async (req, res) => {
   }
 };
 
-// Share file with another user
 export const shareFile = async (req, res) => {
   const { fileId, userIdToShare } = req.body;
 
@@ -48,11 +45,23 @@ export const shareFile = async (req, res) => {
     if (!file) {
       return res.status(404).json({ message: "File not found" });
     }
-
     file.sharedWith.push(userIdToShare);
     await file.save();
-
     res.status(200).json({ message: "File shared successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+export const getFileDetails = async (req, res) => {
+  const { fileId } = req.params;
+
+  try {
+    const file = await File.findById(fileId).populate("owner sharedWith parentFolder");
+    if (!file) {
+      return res.status(404).json({ message: "File not found" });
+    }
+    res.status(200).json(file);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

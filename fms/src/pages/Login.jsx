@@ -32,7 +32,7 @@ const Login = () => {
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      navigate("/"); // Redirect to homepage
+      navigate("/home"); // Redirect to homepage
     } catch (err) {
       console.error(err);
       setError("An error occurred. Please try again.");
