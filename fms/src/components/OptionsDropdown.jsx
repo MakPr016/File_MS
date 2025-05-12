@@ -83,8 +83,9 @@ const OptionsDropdown = ({ id, type, onAction }) => {
       const link = document.createElement("a");
 
       const disposition = response.headers.get("Content-Disposition");
-      const filenameMatch = disposition?.match(/filename="?(.+?)"?$/);
-      const filename = filenameMatch ? filenameMatch[1] : `${id}.download`;
+      const filenameMatch = disposition?.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+      const filename = filenameMatch ? filenameMatch[1].replace(/['"]/g, "") : "downloaded-file";
+
 
       link.href = url;
       link.download = filename;

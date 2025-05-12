@@ -33,7 +33,6 @@ export const handleGridFsUpload = async (req, res, next) => {
 
   const { originalname, mimetype, path: filePath } = req.file;
   const filename = `${req.body.name}${path.extname(originalname)}`;
-  console.log(filename);
 
   const uploadStream = gfsBucket.openUploadStream(filename, {
     contentType: mimetype,

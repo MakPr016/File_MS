@@ -112,7 +112,8 @@ export const downloadFile = async (req, res) => {
       return res.status(404).json({ message: "File not found in storage" });
     }
     res.set("Content-Type", file.contentType || "application/octet-stream");
-    res.set("Content-Disposition", `attachment; filename="${file.filename}"`);
+    res.set("Content-Disposition", `attachment; filename="${fileMeta.name}"`);
+    res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
     gfsBucket.openDownloadStream(new ObjectId(fileMeta.fileId)).pipe(res);
   } catch (err) {
     console.error("Download error:", err);
