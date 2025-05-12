@@ -10,6 +10,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +21,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/users/register", {
+      const response = await fetch(`${backendUrl}/api/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

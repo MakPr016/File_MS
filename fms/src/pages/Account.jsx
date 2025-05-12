@@ -16,6 +16,8 @@ import {
 const Account = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -27,7 +29,7 @@ const Account = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/api/users/profile", {
+        const response = await fetch(`${backendUrl}/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

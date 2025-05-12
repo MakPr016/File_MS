@@ -7,6 +7,8 @@ const Home = () => {
   const [sharedFolders, setSharedFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     const fetchFolders = async () => {
@@ -16,7 +18,7 @@ const Home = () => {
       try {
         const token = localStorage.getItem("authToken");
 
-        const ownedRes = await fetch("http://localhost:3000/api/folders", {
+        const ownedRes = await fetch(`${backendUrl}/api/folders`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -25,7 +27,7 @@ const Home = () => {
         if (!ownedRes.ok) throw new Error("Failed to fetch your folders");
         const ownedData = await ownedRes.json();
 
-        const sharedRes = await fetch("http://localhost:3000/api/folders/shared", {
+        const sharedRes = await fetch(`${backendUrl}/api/folders/shared`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

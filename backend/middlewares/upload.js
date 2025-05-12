@@ -28,14 +28,12 @@ const uploadMiddleware = multer({ storage: tempStorage });
 
 export const upload = uploadMiddleware.single("file");
 
-// Custom middleware after multer to upload to GridFS
 export const handleGridFsUpload = async (req, res, next) => {
   if (!req.file) return res.status(400).send("No file uploaded");
 
   const { originalname, mimetype, path: filePath } = req.file;
-  const filename = req.body.customName
-    ? req.body.customName + path.extname(originalname)
-    : originalname;
+  const filename = `${req.body.name}${path.extname(originalname)}`;
+  console.log(filename);
 
   const uploadStream = gfsBucket.openUploadStream(filename, {
     contentType: mimetype,
@@ -50,7 +48,7 @@ export const handleGridFsUpload = async (req, res, next) => {
     .on("finish", function () {
       const stats = fs.statSync(filePath);
       const size = stats.size;
-      fs.unlinkSync(filePath); // Clean temp file
+      fs.unlinkSync(filePath);
       req.file = {
         filename: filename,
         contentType: mimetype,

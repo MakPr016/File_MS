@@ -38,7 +38,7 @@ const OptionsDropdown = ({ id, type, onAction }) => {
       if (response.ok) {
         toast.success(`${action.charAt(0).toUpperCase() + action.slice(1)} successful`);
         console.log("[OptionsDropdown] Sending action:", { action, id, type });
-        onAction(action, { id, type }); 
+        onAction(action, { id, type });
       } else {
         toast.error("Request failed");
         throw new Error(result?.message || "Request failed");
@@ -66,13 +66,35 @@ const OptionsDropdown = ({ id, type, onAction }) => {
     sendRequest(endpoint, "rename");
   };
 
-  const handleShare = () => {
+  const handleDownload = async () => {
     setShowMenu(false);
-    const endpoint =
-      type === "file"
-        ? `/api/files/${id}/share`
-        : `/api/folders/${id}/share`;
-    sendRequest(endpoint, "share");
+    try {
+      const response = await fetch(`${backendUrl}/api/files/${id}/download`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Download failed");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      const disposition = response.headers.get("Content-Disposition");
+      const filenameMatch = disposition?.match(/filename="?(.+?)"?$/);
+      const filename = filenameMatch ? filenameMatch[1] : `${id}.download`;
+
+      link.href = url;
+      link.download = filename;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success("Download started");
+    } catch (error) {
+      console.error("Error downloading file:", error.message);
+      toast.error("Download failed");
+    }
   };
 
   return (
@@ -93,16 +115,18 @@ const OptionsDropdown = ({ id, type, onAction }) => {
           </button>
           <button
             onClick={handleRename}
-            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200 hover:rounded-xl"
           >
             Rename
           </button>
-          <button
-            onClick={handleShare}
-            className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200 hover:rounded-b-xl"
-          >
-            Share
-          </button>
+          {type === "file" && (
+            <button
+              onClick={handleDownload}
+              className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200 hover:rounded-b-xl"
+            >
+              Download
+            </button>
+          )}
         </div>
       )}
     </div>

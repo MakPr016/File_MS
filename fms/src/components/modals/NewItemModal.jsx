@@ -11,13 +11,15 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
   const [isProtected, setIsProtected] = useState(false);
   const [folders, setFolders] = useState([]);
   const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     const fetchFolders = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/folders", {
+        const response = await fetch(`${backendUrl}/api/folders`, {
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+            "Authorization": `Bearer ${token}`,
           },
         });
   
@@ -52,10 +54,10 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
         formData.append("description", description);
         formData.append("parentFolder", isValidObjectId(location) ? location : "");
 
-        const response = await fetch("http://localhost:3000/api/files/upload", {
+        const response = await fetch(`${backendUrl}/api/files/upload`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+            "Authorization": `Bearer ${token}`,
           },
           body: formData,
         });
@@ -78,11 +80,11 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
           password: isProtected ? password : null,
         };
 
-        const response = await fetch("http://localhost:3000/api/folders/create", {
+        const response = await fetch(`${backendUrl}/api/folders/create`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify(body),
         });
