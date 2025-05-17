@@ -21,7 +21,7 @@ const Folder = ({ name, fileCount, folderId, size, onAction}) => {
       <div className="text-sm text-gray-500 flex gap-2">
         <span>{fileCount} Files</span>
         <span>|</span>
-        <span>{size} MB</span>
+        <span>{size}</span>
       </div>
     </div>
   );

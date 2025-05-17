@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Home, Folders, Login, Signup, Account, LandingPage, FolderPage, FilePage } from "../pages"
+import { Home, Login, Signup, Account, LandingPage, FolderPage, FilePage, NewFile ,NewFolder } from "../pages"
 
 const AppRoutes = () => {
 
@@ -8,9 +8,10 @@ const AppRoutes = () => {
     <Routes>
         <Route path="/" element={<LandingPage />} /> 
         <Route path="/home" element={<Home />} /> 
-        <Route path="/folders" element={<Folders />} />
         <Route path="/folder/:id" element={<FolderPage />} /> 
         <Route path="/file/:fileId" element={<FilePage />} /> 
+        <Route path="/new-folder" element={<NewFolder />} />
+        <Route path="/new-file" element={<NewFile />} />
         <Route path="/account" element={<Account />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/signup" element={<Signup />} />

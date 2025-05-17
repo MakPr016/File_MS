@@ -6,7 +6,7 @@ const fileSchema = new mongoose.Schema({
     required: true,
   },
   size: {
-    type: Number, // Size in bytes
+    type: Number,
     required: true,
   },
   fileId: {

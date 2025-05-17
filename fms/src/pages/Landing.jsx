@@ -1,3 +1,4 @@
+import FolderImage from "../assets/folder.svg";
 const LandingPage = () => (
   <div className="flex flex-col items-center text-center px-6 py-16 space-y-32 text-gray-800">
 
@@ -25,8 +26,8 @@ const LandingPage = () => (
         </div>
       </div>
       <div className="lg:w-1/2 w-[95%] h-[70vh] lg:h-96 mx-auto">
-        <div className="w-full h-full bg-gray-200 rounded-2xl shadow-inner flex items-center justify-center">
-          <span className="text-gray-500 text-xl">[Image Placeholder]</span>
+        <div className="w-full h-full max-sm:h-100 rounded-2xl shadow-inner flex items-center justify-center">
+          <img src={FolderImage} alt="Folder" className="w-100 h-100 max-sm:h-50" />
         </div>
       </div>
 

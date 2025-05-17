@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FaFolder,
   FaUser,
@@ -61,7 +61,7 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
       } lg:translate-x-0`}
     >
       <div className="flex justify-between items-center p-4">
-        <h1 className="text-2xl font-bold text-gray-800">Files</h1>
+        <h1 className="text-2xl font-bold text-gray-800">File <span className="text-blue-500">MS</span></h1>
         <button className="lg:hidden text-gray-700" onClick={toggleSidebar}>
           ✖
         </button>
@@ -78,18 +78,14 @@ const Sidebar = ({ isOpen, toggleSidebar, openNewItemModal }) => {
           <SidebarItem
             icon={<FaPlus />}
             text="New Folder"
-            onClick={() => handleItemClick(() => openNewItemModal("folder"))}
+            onClick={() => handleItemClick(() => navigate("/new-folder"))}
+            active={window.location.pathname === "/new-folder"}
           />
           <SidebarItem
             icon={<FaFileAlt />}
             text="New File"
-            onClick={() => handleItemClick(() => openNewItemModal("file"))}
-          />
-          <SidebarItem
-            icon={<FaFolder />}
-            text="My Folders"
-            onClick={() => handleItemClick(() => navigate("/folders"))}
-            active={window.location.pathname === "/folders"}
+            onClick={() => handleItemClick(() => navigate("/new-file"))}
+            active={window.location.pathname === "/new-file"}
           />
           <SidebarItem
             icon={<FaUser />}

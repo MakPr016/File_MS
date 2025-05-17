@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Folder from "../components/Folder";
 import FolderProtected from "../components/FolderProtected";
 import File from "../components/File";
+import PasswordModal from "../components/modals/PasswordModal";
 
 const FolderPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [folderData, setFolderData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFolderId, setSelectedFolderId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("authToken");
@@ -72,6 +78,32 @@ const FolderPage = () => {
       });
     }
   };
+  const handleProtectedFolderClick = (folderId) => {
+    setSelectedFolderId(folderId);
+    setErrorMessage("");
+    setIsModalOpen(true);
+  };
+  const handlePasswordSubmit = async (password) => {
+    try {
+      const res = await fetch(`${backendUrl}/api/folders/${selectedFolderId}/verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ password }),
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        setIsModalOpen(false);
+        navigate(`/folders/${selectedFolderId}`);
+      } else {
+        setErrorMessage("Incorrect password. Please try again.");
+      }
+    } catch (err) {
+      setErrorMessage("Error verifying password. Please try again later.");
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (!folderData) return <div>Folder not found</div>;
@@ -95,6 +127,7 @@ const FolderPage = () => {
                   size={formatSizeInMB(folder.size)}
                   folderId={folder._id}
                   onAction={handleAction}
+                  onClick={() => handleProtectedFolderClick(folder._id)}
                 />
               ) : (
                 <Folder
@@ -130,6 +163,13 @@ const FolderPage = () => {
           )}
         </div>
       </div>
+
+      <PasswordModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handlePasswordSubmit}
+        errorMessage={errorMessage}
+      />
     </section>
   );
 };

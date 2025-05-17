@@ -31,7 +31,6 @@ export const createFolder = async (req, res) => {
   }
 };
 
-// Optional: Add user to sharedWith
 export const shareFolder = async (req, res) => {
   const { folderId, userIdToShare } = req.body;
 
@@ -51,7 +50,6 @@ export const shareFolder = async (req, res) => {
   }
 };
 
-// Get all folders created by the user
 export const getFolders = async (req, res) => {
   try {
     const folders = await Folder.find({ owner: req.user.id });
@@ -77,7 +75,6 @@ export const getFolders = async (req, res) => {
   }
 };
 
-// Get all folders shared with the current user
 export const getSharedFolders = async (req, res) => {
   try {
     const userId = req.user._id;

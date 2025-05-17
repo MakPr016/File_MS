@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
-import Modal from "./Modal";
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
+const NewItemForm = ({ itemType }) => {
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
-  const [location, setLocation] = useState("Current Directory");
+  const [location, setLocation] = useState("Root");
   const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");
   const [isProtected, setIsProtected] = useState(false);
   const [folders, setFolders] = useState([]);
+
+  const navigate = useNavigate();
   const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const token = localStorage.getItem("authToken");
@@ -19,7 +21,7 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
       try {
         const response = await fetch(`${backendUrl}/api/folders`, {
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -34,16 +36,8 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
       }
     };
 
-    if (!isOpen) {
-      setName("");
-      setFile(null);
-      setLocation("Current Directory");
-      setDescription("");
-      setPassword("");
-      setIsProtected(false);
-      fetchFolders();
-    }
-  }, [isOpen]);
+    fetchFolders();
+  }, []);
 
   const handleSave = async () => {
     try {
@@ -57,23 +51,20 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
         const response = await fetch(`${backendUrl}/api/files/upload`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
-          credentials: 'include'
         });
 
         const data = await response.json();
-
         if (response.ok) {
-          console.log("File uploaded:");
           toast.success("File uploaded successfully!");
+          navigate(-1);
         } else {
-          console.error("File upload failed:", data);
           toast.error("File upload failed!");
+          console.error(data);
         }
-
-      } else if (itemType === "folder") {
+      } else {
         const body = {
           name,
           parentFolder: isValidObjectId(location) ? location : null,
@@ -85,37 +76,33 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(body),
-          credentials: 'include'
         });
 
         const data = await response.json();
-
         if (response.ok) {
-          console.log("Folder created:");
           toast.success("Folder created successfully!");
+          navigate(-1);
         } else {
-          console.error("Folder creation failed:", data);
           toast.error("Folder creation failed!");
+          console.error(data);
         }
       }
 
-      onClose();
     } catch (error) {
       console.error("An error occurred:", error);
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={itemType === "file" ? "Upload File" : "New Folder"}
-    >
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-6">
+      <h2 className="text-xl font-semibold mb-4">
+        {itemType === "file" ? "Upload File" : "Create New Folder"}
+      </h2>
+
       <div className="space-y-4">
-        {/* Name Input */}
         <div>
           <label className="block text-sm font-semibold mb-2 text-gray-700">
             {itemType === "file" ? "File Name *" : "Folder Name *"}
@@ -125,11 +112,10 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
             placeholder={`Enter ${itemType === "file" ? "file name" : "folder name"}`}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
+            className="w-full p-2.5 border border-gray-300 rounded-lg"
           />
         </div>
 
-        {/* File Upload Section */}
         {itemType === "file" && (
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700">
@@ -185,21 +171,22 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700">File Description</label>
             <textarea
-              placeholder="Write file description..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white h-24 resize-none"
+              placeholder="Enter file description..."
+              className="w-full p-2.5 border border-gray-300 rounded-lg resize-none"
+              rows={3}
             />
           </div>
         )}
 
-        {/* Location Selector */}
+        {/* Folder location */}
         <div>
           <label className="block text-sm font-semibold mb-2 text-gray-700">Location</label>
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
+            className="w-full p-2.5 border border-gray-300 rounded-lg"
           >
             <option value="Root">Root</option>
             {folders.map((folder) => (
@@ -210,53 +197,41 @@ const NewItemModal = ({ isOpen, onClose, onSave, itemType }) => {
           </select>
         </div>
 
-        {/* Password Protection */}
+        {/* Password protection for folders */}
         {itemType === "folder" && (
-          <div className="space-y-2">
+          <div>
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={isProtected}
                 onChange={() => setIsProtected(!isProtected)}
-                className="rounded text-blue-500 focus:ring-blue-400 h-4 w-4"
               />
-              <span className="text-sm text-gray-700">Add Password Protection</span>
+              <span>Add Password Protection</span>
             </label>
             {isProtected && (
               <input
                 type="password"
-                placeholder="Enter Password"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
+                className="mt-2 w-full p-2.5 border border-gray-300 rounded-lg"
               />
-            )}
-            {isProtected && (
-              <span className="inline-block ml-2 px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-md">
-                Protected
-              </span>
             )}
           </div>
         )}
 
         {/* Buttons */}
-        <div className="flex justify-end gap-3 mt-6 border-t border-gray-200 pt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium"
-          >
-            Close
-          </button>
+        <div className="flex justify-end gap-3 mt-6">
           <button
             onClick={handleSave}
-            className="px-4 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium shadow-sm"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            {itemType === "file" ? "Upload" : "Create Folder"}
+            {itemType === "file" ? "Upload File" : "Create Folder"}
           </button>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 };
 
-export default NewItemModal;
+export default NewItemForm;
