@@ -44,6 +44,7 @@ export const uploadFile = async (req, res) => {
   }
 };
 
+// share a file with another user using their user ID
 export const shareFile = async (req, res) => {
   const { fileId, userIdToShare } = req.body;
 
@@ -61,6 +62,7 @@ export const shareFile = async (req, res) => {
   }
 };
 
+// get details of a single file using fileID 
 export const getFileDetails = async (req, res) => {
   const { fileId } = req.params;
 
